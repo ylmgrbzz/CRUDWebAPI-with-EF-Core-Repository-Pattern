@@ -1,6 +1,9 @@
-﻿namespace CRUDWebAPI.Core
+﻿using CRUDWebAPI.Models;
+
+namespace CRUDWebAPI.Core
 {
-    public class IDriverRepository
+    public interface IDriverRepository : IGenericRepository<Driver>
     {
+        Task<Driver> GetByDriverNb(int driverNb);
     }
 }

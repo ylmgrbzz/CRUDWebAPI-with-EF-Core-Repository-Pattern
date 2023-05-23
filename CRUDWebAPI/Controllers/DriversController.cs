@@ -84,6 +84,5 @@ namespace CRUDWebAPI.Controllers
             _context.Drivers.Remove(driver);
             return Ok(driver);
         }
-
     }
 }
