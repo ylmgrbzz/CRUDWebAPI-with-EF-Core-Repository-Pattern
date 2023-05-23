@@ -8,7 +8,7 @@ namespace CRUDWebAPI.Controllers
     [ApiController]
     public class DriversController : ControllerBase
     {
-        private readonly List<Driver> _drivers = new List<Driver>()
+        private static List<Driver> _drivers = new List<Driver>()
         {
             new Driver() { Id = 1, Name = "Lewis Hamilton", DriverNumber = 44, Team = "Mercedes" },
             new Driver() { Id = 2, Name = "Valtteri Bottas", DriverNumber = 77, Team = "Mercedes" },
@@ -42,5 +42,37 @@ namespace CRUDWebAPI.Controllers
             _drivers.Add(driver);
             return CreatedAtAction(nameof(Get), new { id = driver.Id }, driver);
         }
+
+        [HttpPut]
+        [Route("update/{id}")]
+        public IActionResult Put(int id, Driver driver)
+        {
+            if (id != driver.Id)
+            {
+                return BadRequest();
+            }
+            var existingDriver = _drivers.FirstOrDefault(d => d.Id == id);
+            if (existingDriver == null)
+            {
+                return NotFound();
+            }
+            existingDriver.Name = driver.Name;
+            existingDriver.DriverNumber = driver.DriverNumber;
+            existingDriver.Team = driver.Team;
+            return Ok(existingDriver);
+        }
+        [HttpDelete]
+        [Route("delete/{id}")]
+        public IActionResult Delete(int id)
+        {
+            var driver = _drivers.FirstOrDefault(d => d.Id == id);
+            if (driver == null)
+            {
+                return NotFound();
+            }
+            _drivers.Remove(driver);
+            return Ok(driver);
+        }
+
     }
 }
