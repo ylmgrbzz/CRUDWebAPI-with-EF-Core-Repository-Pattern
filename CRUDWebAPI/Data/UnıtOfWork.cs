@@ -1,4 +1,5 @@
 ﻿using CRUDWebAPI.Core;
+using CRUDWebAPI.Core.Repositories;
 
 namespace CRUDWebAPI.Data
 {
@@ -17,12 +18,12 @@ namespace CRUDWebAPI.Data
         }
         public Task CompleteAsync()
         {
-            throw new NotImplementedException();
+            return _context.SaveChangesAsync();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _context.Dispose();
         }
     }
 }

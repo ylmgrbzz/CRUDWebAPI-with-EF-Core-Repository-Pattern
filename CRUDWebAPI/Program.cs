@@ -1,3 +1,4 @@
+using CRUDWebAPI.Core;
 using CRUDWebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +13,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApiDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnýtOfWork, UnýtOfWork>();
 
 var app = builder.Build();
 

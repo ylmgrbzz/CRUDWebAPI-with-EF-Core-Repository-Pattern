@@ -22,12 +22,11 @@ namespace CRUDWebAPI.Core.Repositories
                 throw;
             }
         }
-
         public async Task<Driver> GetByDriverNb(int driverNb)
         {
             try
             {
-                return _context.Drivers.FirstOrDefaultAsync(x => x.DriverNumber == driverNb);
+                return await _context.Drivers.FirstOrDefaultAsync(x => x.DriverNumber == driverNb);
             }
             catch (Exception e)
             {

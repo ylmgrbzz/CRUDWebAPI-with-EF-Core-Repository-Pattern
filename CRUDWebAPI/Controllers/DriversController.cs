@@ -1,4 +1,5 @@
-﻿using CRUDWebAPI.Data;
+﻿using CRUDWebAPI.Core;
+using CRUDWebAPI.Data;
 using CRUDWebAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,23 +22,32 @@ namespace CRUDWebAPI.Controllers
         //    new Driver() { Id = 6, Name = "Daniel Ricciardo", DriverNumber = 3, Team = "McLaren" },
         //};
 
-        private readonly ApiDbContext _context;
-        public DriversController(ApiDbContext context)
+        //private readonly ApiDbContext _context;
+        //public DriversController(ApiDbContext context)
+        //{
+        //    _context = context;
+        //}
+
+        private readonly IUnıtOfWork _unıtOfWork;
+        public DriversController(UnıtOfWork unıtOfWork)
         {
-            _context = context;
+            _unıtOfWork = unıtOfWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            return Ok(_context.Drivers.ToListAsync());
+            //return Ok(_context.Drivers.ToListAsync());
+            return Ok(await _unıtOfWork.Drivers.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
             //var driver = _drivers.FirstOrDefault(d => d.Id == id);
-            var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.Id == id);
+            //var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.Id == id);
+
+            var driver = await _unıtOfWork.Drivers.GetById(id);
 
             if (driver == null)
             {
@@ -52,8 +62,10 @@ namespace CRUDWebAPI.Controllers
         {
             //_drivers.Add(driver);
             //return CreatedAtAction(nameof(Get), new { id = driver.Id }, driver);
-            _context.Drivers.Add(driver);
-            await _context.SaveChangesAsync();
+            //_context.Drivers.Add(driver);
+            //await _context.SaveChangesAsync();
+            await _unıtOfWork.Drivers.Add(driver);
+            await _unıtOfWork.CompleteAsync();
             return Ok();
         }
 
@@ -61,7 +73,8 @@ namespace CRUDWebAPI.Controllers
         [Route("update/{id}")]
         public async Task<IActionResult> UpdateDriver(Driver driver)
         {
-            var driverToUpdate = await _context.Drivers.FirstOrDefaultAsync(d => d.Id == driver.Id);
+            //var driverToUpdate = await _context.Drivers.FirstOrDefaultAsync(d => d.Id == driver.Id);
+            var driverToUpdate = await _unıtOfWork.Drivers.GetById(driver.Id);
             if (driverToUpdate == null)
             {
                 return NotFound();
@@ -69,19 +82,23 @@ namespace CRUDWebAPI.Controllers
             driverToUpdate.Name = driver.Name;
             driverToUpdate.DriverNumber = driver.DriverNumber;
             driverToUpdate.Team = driver.Team;
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
+            await _unıtOfWork.CompleteAsync();
             return Ok(driverToUpdate);
         }
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.Id == id);
+            //var driver = await _context.Drivers.FirstOrDefaultAsync(d => d.Id == id);
+            var driver = await _unıtOfWork.Drivers.GetById(id);
             if (driver == null)
             {
                 return NotFound();
             }
-            _context.Drivers.Remove(driver);
+            //_context.Drivers.Remove(driver);
+            await _unıtOfWork.Drivers.Delete(driver);
+            await _unıtOfWork.CompleteAsync();
             return Ok(driver);
         }
     }
