@@ -15,31 +15,29 @@ namespace CRUDWebAPI.Core.Repositories
             _logger = logger;
             this._dbSet = _context.Set<T>();
         }
-
-
-        public Task<bool> Add(T entity)
+        public async Task<bool> Add(T entity)
         {
-            throw new NotImplementedException();
+            await _dbSet.AddAsync(entity);
+            return true;
         }
-
-        public Task<bool> Delete(T entity)
+        public async Task<bool> Delete(T entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Remove(entity);
+            return true;
         }
-
-        public Task<IEnumerable<T>> GetAll()
+        public async Task<IEnumerable<T>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _dbSet.ToListAsync();
         }
-
-        public Task<T> GetById(int id)
+        public async Task<T> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await _dbSet.FindAsync(id);
+
         }
-
-        public Task<bool> Update(T entity)
+        public async Task<bool> Update(T entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Update(entity);
+            return true;
         }
     }
 }
