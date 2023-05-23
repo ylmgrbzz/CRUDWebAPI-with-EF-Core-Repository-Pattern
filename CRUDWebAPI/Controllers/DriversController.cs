@@ -57,23 +57,20 @@ namespace CRUDWebAPI.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPatch]
         [Route("update/{id}")]
-        public async Task<IActionResult> Put(int id, Driver driver)
+        public async Task<IActionResult> UpdateDriver(Driver driver)
         {
-            if (id != driver.Id)
-            {
-                return BadRequest();
-            }
-            var existingDriver = _context.Drivers.FirstOrDefault(d => d.Id == id);
-            if (existingDriver == null)
+            var driverToUpdate = await _context.Drivers.FirstOrDefaultAsync(d => d.Id == driver.Id);
+            if (driverToUpdate == null)
             {
                 return NotFound();
             }
-            existingDriver.Name = driver.Name;
-            existingDriver.DriverNumber = driver.DriverNumber;
-            existingDriver.Team = driver.Team;
-            return Ok(existingDriver);
+            driverToUpdate.Name = driver.Name;
+            driverToUpdate.DriverNumber = driver.DriverNumber;
+            driverToUpdate.Team = driver.Team;
+            await _context.SaveChangesAsync();
+            return Ok(driverToUpdate);
         }
         [HttpDelete]
         [Route("delete/{id}")]
